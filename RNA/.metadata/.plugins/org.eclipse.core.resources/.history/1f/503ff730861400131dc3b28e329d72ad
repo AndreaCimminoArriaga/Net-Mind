@@ -1,0 +1,115 @@
+package main;
+
+import java.io.IOException;
+import proben1.Proben1;
+import neuralNetwork.NeuralNetwork;
+
+// In this class you'll can:
+//
+//	CASE1: CREATE A DEFAULT CONFIGURATION FILE:
+//		1 - Just type "nn create_default_config_file"
+
+//	CASE2: CREATE A NETWORK
+//		1 - Just type "nn -new [topology] [network_name]"
+// 		* three topologies available:
+//			Topology A: n, m -> n input neurons, m output neurons.
+//			Topology B: n, k, j, m -> n input neurons, k hidden layers with j neurons in each one and m output neurons.
+//			Topology C: n, k, [a,b,c,..], m -> n input neurons, k hidden layers with a number of neurons equal as indicated between the '['']' and m output neurons
+//		2 - Once created it will appear a file with the network name containing all the data.
+
+//	CASE3: LOAD A NETWORK AND TRAIN IT:
+// 		1 - Just type  "nn -train [network_file] [proben_file]"
+//		2 - At the end the neural network obtained will be saved in the same file.
+
+//	CASE4: LOAD A NETWORK AND TEST IT
+//		1 - Just type  "nn -test [network_file] [proben_file]"
+//		2 - The results will appear in the console.
+
+// PLEASE USE ALWAYS THE STRUCTURE OF THE PROBEN FILE FOR BECHMARKING.
+
+public class Main {
+	// Default Parameters.
+	public static Double ALFAMOMENTUM = 0.15; // Ideal range 0.05 .. 0.25
+	public static Double LEARNING_CONSTANT = 0.8;
+	public static Integer STRIP = 5;
+	public static Double Pk_MIN = 0.1;
+	public static Integer MAX_EPOCHS = 3000;
+	public static Double O_MAX = 1.0;
+	public static Double O_MIN = 0.0;	
+	public static Boolean output_initialised = true;
+	public static String topology;	
+	public static Boolean trained = false;
+	
+	public static void main(String[] args) throws IOException {
+		
+		// PRINT HELP
+		if(args[1].equals("-help")){
+			Utilities.printHelp();
+		}
+		
+		// CASE 1
+		// In case of we are creating the config file:
+		if(args[1].equals("create_default_config_file")){
+			Utilities.writeConfigFile();
+		}
+		//Initializing parameters
+		if(!initialise_params()){
+			System.out.println(" To generate the default configuration file type nni config_default");
+		}
+		
+		// CASE 2
+		if(args[1].equals("-new") && args.length == 4){
+			String topology = args[2];
+			String file = args[3];
+			Main.topology = topology;
+			NeuralNetwork neuralNetwork = Utilities.networkFromString(topology);
+			Utilities.StoreNetwork(file+".txt", neuralNetwork);
+		}
+		
+		// CASE 3
+		if (args[1].equals("-train") && args.length == 4) {
+			NeuralNetwork neuralNetwork = Utilities.loadNeuralNetwork(args[2]);
+			String file_name = args[2].substring(0,args[2].indexOf("."));
+			Utilities.writeTrainingStatistics(file_name+"_statistics.txt");
+			if(Main.trained){
+				System.out.println("- The network "+args[2]+" is alredy trained.");
+			}else{
+				
+				Proben1 proben1 = new Proben1(neuralNetwork, args[3]);
+				neuralNetwork = proben1.trainingProcess();
+				Main.trained = true;
+				
+				Utilities.StoreNetwork( args[2], neuralNetwork);
+			}
+		
+		
+		}
+		
+		// CASE 4	
+		if (args[1].equals("-test") && args.length == 4) {
+			NeuralNetwork neuralNetwork = Utilities.loadNeuralNetwork(args[2]);
+			if(!Main.trained){
+				System.out.println("- The network need's to be trained.");
+			}else{
+				//proben 1 test set.
+				// create the file or show results.
+				Utilities.StoreNetwork( args[2], neuralNetwork);
+			}
+		}
+		
+		
+	}
+
+	// Initializes the parameters from the configuration file.
+	private static Boolean initialise_params() throws IOException{
+		
+		// Reading the configuration file
+		Boolean res = Utilities.readConfigFile();
+		
+		// Checking if o_max and o_min are initialized.
+		if( O_MAX == 0.0 && O_MIN == 0.0){
+			output_initialised = false;
+		}
+		return res;
+	}
+}

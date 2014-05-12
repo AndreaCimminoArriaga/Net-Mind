@@ -1,0 +1,10 @@
+ALFAMOMENTUM = 0.15 
+LEARNING_CONSTANT = 0.8
+	
+
+Pk_MIN = 0.1
+MAX_EPOCHS = 30000
+O_MAX = 0.0
+O_MIN = 0.0	
+
+Files: cancer1, cancer2, glass1, glass2,

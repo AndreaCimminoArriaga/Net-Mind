@@ -1,0 +1,59 @@
+package proben1;
+
+import java.util.Collection;
+import java.util.List;
+
+import neuralNetwork.NeuralNetwork;
+
+public class Statistics {
+	// TRAINING STATISTICS
+	
+	// Training Set
+	public static Double minimumSquaredErrorPercentageInTraining = 9999.0;
+	public static Integer numberOfTrainingExamples = 0;
+	// Validation Set
+	public static Double minumumSquaredErrorPercentageInValidation = 99999.0;
+	public static Integer numberOfValidationExamples = 0;
+	// Total Epoch
+	public static Integer totalEpochsToFinishTraining = 0;
+	//Overfit
+	public static Double overfit = 0.0;
+	//Relevant Epochs
+	public static Integer epochToReachBestNN = 0;
+	public static NeuralNetwork bestNN = null;
+	public static Double bestEva = 9999.0;
+	
+	// TEST STATISTICS
+	
+	// Test Set.
+	public static Double meanSquaredErrorPercentageAtMiniumValidationError = 0.0;
+	//Test set Clasification
+	public static Integer faliuresClassifying = 0;
+	public static Integer numberOFTestElements = 0;
+	
+	public static void calculateFaliuresClassifying(Collection<Double> outputs, List<Double> targets){
+		int i=0;
+		Boolean equal = true;
+		numberOFTestElements++;
+		
+		for(Double output:outputs){
+			
+			Integer roundedOutputValue = (int) Math.round(output);
+			Integer roundedTargetValue = (int) Math.round(targets.get(i));
+			if(roundedOutputValue != roundedTargetValue){
+				equal = false;
+				break;
+			}
+			
+			i++;
+		}
+		
+		if(equal){
+			faliuresClassifying++;
+		}
+		
+	}
+	
+	
+	
+}

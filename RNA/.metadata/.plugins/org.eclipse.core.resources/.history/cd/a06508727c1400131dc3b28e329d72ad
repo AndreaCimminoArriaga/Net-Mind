@@ -1,0 +1,9 @@
+package proben1;
+
+import neuralNetwork.NeuralNetwork;
+
+public class Statistics {
+
+	private static Integer epochToReachBestNN = 0;
+	private static NeuralNetwork bestNN = null;
+}

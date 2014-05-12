@@ -1,0 +1,15 @@
+Proben File,Network Name - Topology,Learning constant,Alphamomentum,O_max,O_min,Outputs were initialized,Number of traning examples,Minimum mean squared error reached on training,Number of validation examples,Minimum mean squared error reached on validation,Overfit,Total epochs,Relevant epoch,Number of test examples,Mean squared error on testing,Number of Faliures Classifying
+cancer1/cancer1.dt,"red_cancer_10.txt : 9,1,8,2",0.4,0.15,1.0,0.0,false,350,5.8693802324446835,175,1.0135929726180855,6.850989576171118,65,50,174,3.3530468495652497,31
+cancer1/cancer1.dt,"red_cancer_1.txt : 9,2",0.8,0.25,1.0,0.0,false,350,4.774593334493066,175,1.3013985360345293,7.346976376355907,20,10,174,4.291998500305355,33
+cancer1/cancer1.dt,"red_cancer_2.txt : 9,2",0.8,0.15,1.0,0.0,false,350,4.815247931817748,175,1.3335205175576492,6.9451231179141315,35,15,174,4.330106071327602,29
+cancer1/cancer1.dt,"red_cancer_3.txt : 9,2",0.8,0.05,1.0,0.0,false,350,4.94539756639961,175,1.3648536500251618,5.402822903711102,75,25,174,4.264939259951179,17
+cancer1/cancer1.dt,"red_cancer_4.txt : 9,2",0.15,0.15,1.0,0.0,false,350,5.808075212626615,175,1.515820963887503,5.515876035351197,55,35,174,4.951040049451308,36
+cancer1/cancer1.dt,"red_cancer_5.txt : 9,2",0.4,0.15,1.0,0.0,false,350,5.463193691649254,175,1.4265299054627096,6.237933000040252,45,25,174,4.643076087582454,33
+cancer1/cancer1.dt,"red_cancer_6.txt : 9,5,20,2",0.4,0.15,1.0,0.0,false,350,5.684513079432318,175,3.1967541022093924,0.5150657197249942,3000,10,174,8.129670693107613,85
+cancer1/cancer1.dt,"red_cancer_7.txt : 9,6,[8,7,6,5,4,3],2",0.4,0.15,1.0,0.0,false,350,6.0455963763144505,175,3.2088815750713704,0.13571954669884256,3000,20,174,8.129682831029958,85
+cancer1/cancer1.dt,"red_cancer_8.txt : 9,2,[7,4],2",0.4,0.15,1.0,0.0,false,350,6.015397979356171,175,1.0420168918702242,5.081759332823155,315,115,174,3.57102613483182,40
+cancer1/cancer1.dt,"red_cancer_9.txt : 9,1,4,2",0.4,0.15,1.0,0.0,false,350,6.004724240076764,175,1.003173917404489,7.111932796720399,65,50,174,3.3912228800862727,36
+
+
+Training Set Mean,Training Set Stddev,Validation Set Mean,Validation Set Stddev,Test Set Mean,Test Set Stddev,Test Set Classification Mean,Test Set Classification Stddev,Overfit Mean,Overfit Stddev,Total Epochs Mean,Total Epochs Stddev,Relevant Epochs Mean,Relevant Epochs Stddev
+"5,5426","0,4868","1,6407","0,7991","4,9056","1,6871","24,4253%","0,1265","5,1144","2,5058","667,5000","1.168,9488","35,5000","29,8706"

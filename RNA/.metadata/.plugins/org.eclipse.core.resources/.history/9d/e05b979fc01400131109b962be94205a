@@ -1,0 +1,415 @@
+package main;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import proben1.Statistics;
+import neuralNetwork.Layer;
+import neuralNetwork.NeuralNetwork;
+import neuralNetwork.Neuron;
+import neuralNetwork.Synapse;
+
+public class Utilities {
+
+	private static Double treatLine(String line){
+		Integer beginIndex = line.indexOf("=");
+		Integer endIndex = line.length();
+		String number = line.substring(beginIndex+1, endIndex);
+		return new Double(number);
+	}
+	
+	// Read the config file and initializes the parameters
+	public static boolean readConfigFile() throws IOException{
+		FileReader fileReader = new FileReader("configuration.txt");	
+		@SuppressWarnings("resource")
+		BufferedReader bufferReader = new BufferedReader(fileReader);
+		String line ="";
+		// Check if all the params are specified int config file. 
+		int counter_ok = 0;
+		
+		while ((line = bufferReader.readLine())!=null) {
+			
+			// Reading ALFAMOMENTUM param
+			if( line.contains("ALFAMOMENTUM")){
+				Main.ALFAMOMENTUM = treatLine(line);
+				counter_ok++;
+			}
+			
+			// Reading LEARNING_CONSTANT param
+			if(line.contains("LEARNING_CONSTANT")){
+				Main.LEARNING_CONSTANT = treatLine(line);
+				counter_ok++;	
+			}
+			
+			// Reading STRIP param
+			if (line.contains("STRIP")) {
+				String number_string = treatLine(line).toString();
+				Main.STRIP = new Integer(number_string.substring(0, number_string.indexOf(".")));
+				counter_ok++;	
+			}
+			
+			// Reading Pk_MIN param
+			if (line.contains("Pk_MIN")) {
+				Main.Pk_MIN = treatLine(line);
+				counter_ok++;
+			}
+			
+			// Reading MAX_EPOCHS param
+			if (line.contains("MAX_EPOCHS")) {
+				String number_string = treatLine(line).toString();
+				Main.MAX_EPOCHS = new Integer(number_string.substring(0, number_string.indexOf(".")));
+				counter_ok++;
+			}
+			
+			// Reading O_MAX param
+			if (line.contains("O_MAX")) {
+				Main.O_MAX = treatLine(line);
+				counter_ok++;
+			}
+			
+			// Reading O_MAX param
+			if (line.contains("O_MAX")) {
+				Main.O_MAX = treatLine(line);
+				counter_ok++;
+			}
+			
+		}
+		
+		if(counter_ok != 7  ){
+			System.out.println("Error reading config file, please check it out or generate a default configuration file.");
+			return false;
+		}else{
+			return true;
+		}
+		
+	}
+
+	// Write a default config file
+	public static void writeConfigFile() throws IOException{
+		BufferedWriter writer =  new BufferedWriter(new FileWriter("configuration.txt"));
+		
+		writer.write("ALFAMOMENTUM = 0.15");
+		writer.newLine();
+		writer.write("LEARNING_CONSTANT = 0.8");
+		writer.newLine();
+		writer.write("STRIP = 5");
+		writer.newLine();
+		writer.write("Pk_MIN = 0.1");	
+		writer.newLine();
+		writer.write("MAX_EPOCHS = 30000");
+		writer.newLine();
+		writer.write("O_MAX = 0.0");
+		writer.newLine();
+		writer.write("O_MIN = 0.0");
+		writer.newLine();
+		writer.close();
+	}
+
+	// Print the help instructions
+	public static void printHelp(){
+		System.out.println("------------------- nn User's manual------------------- " );
+		System.out.println("");
+		System.out.println(" CREATE A DEFAULT CONFIGURATION FILE:");
+		System.out.println("	1 - Just type \"nn create_default_config_file\"");
+		System.out.println("");
+		System.out.println(" CREATE A NETWORK");
+		System.out.println("	1 - Just type \"nn -new [topology] [network_name]\"");
+		System.out.println("	* three topologies available:");
+		System.out.println("		Topology A: n, m -> n input neurons, m output neurons.");
+		System.out.println("		Topology B: n, k, j, m -> n input neurons, k hidden layers with j neurons in each one and m output neurons.");
+		System.out.println("		Topology C: n, k, [a,b,c,..], m -> n input neurons, k hidden layers with a number of neurons equal as indicated between the '['']' and m output neurons");
+		System.out.println("	2 - Once created it will appear a file with the network name containing all the data.");
+		System.out.println("");
+		System.out.println("LOAD A NETWORK AND TRAIN IT:");
+	 	System.out.println("	1 - Just type  \"nn -train [network_file] [proben_file]\"");
+		System.out.println("	2 - At the end the neural network obtained will be saved in the same file.");
+		System.out.println("");
+		System.out.println(" LOAD A NETWORK AND TEST IT");
+		System.out.println("	1 - Just type  \"nn -test [network_file] [proben_file]\"");
+		System.out.println("	2 - The results will appear in the console.");
+		System.out.println("");
+		System.out.println(" CREATE A NETWORK, TRAIN IT AND TEST IT.");
+		System.out.println("	1 - Just type \"nn -ctt [topology] [network_name] [proben_file] \""); 
+		System.out.println("	2 - The results will appear in statistic file.");
+		System.out.println("");
+		System.out.println(" PLEASE USE ALWAYS THE STRUCTURE OF THE PROBEN FILE FOR BECHMARKING.");
+	}
+
+	// Create a neural network from a string topology.
+	public static NeuralNetwork networkFromString(String topology){
+		topology = topology.trim();
+		String[] networkData =  topology.split(",");
+		NeuralNetwork neuralNetwork = null;
+		// Simplest case
+		if(networkData.length == 2){
+			Integer inputs = new Integer(networkData[0]);
+			Integer outputs = new Integer(networkData[1]);
+			neuralNetwork =  new NeuralNetwork(inputs, outputs);
+			
+		} else if (networkData.length == 4 && !networkData[2].contains("[")){
+			// Neural network with 'regular' hidden layers.
+			Integer inputs = new Integer(networkData[0]);
+			Integer number_of_layers = new Integer(networkData[1]);
+			Integer neurons_per_layer = new Integer(networkData[2]);
+			Integer outputs = new Integer(networkData[3]);
+			neuralNetwork =  new NeuralNetwork(inputs, number_of_layers, neurons_per_layer, outputs);
+		} else if (networkData.length >= 4 && networkData[2].startsWith("[")){
+			// Neural network with 'non-regular' hidden layers.
+			
+			Integer inputs = new Integer(networkData[0]);
+			Integer number_of_layers = new Integer(networkData[1]);
+			int[] neurons_per_layer = new int[(networkData.length-3)];
+			for(int i = 2; i< networkData.length-1; i++){
+				String elem = networkData[i];
+				
+				if(elem.contains("[")){
+					
+					neurons_per_layer[i-2] = new Integer(elem.substring(1)).intValue();
+				}else if(elem.contains("]")){
+					neurons_per_layer[i-2] = new Integer(elem.substring(0,1)).intValue();
+				}else{
+					neurons_per_layer[i-2] = new Integer(elem).intValue();
+				}
+			}
+			
+			Integer outputs = new Integer(networkData[networkData.length-1]);
+			neuralNetwork =  new NeuralNetwork(inputs, number_of_layers, neurons_per_layer, outputs);
+		}
+		return neuralNetwork;
+	}
+
+	// Write a file that stores a neural network and the network's trains status.
+	public static void StoreNetwork(String file_name, NeuralNetwork network) throws IOException{
+		File file = new File(file_name);
+		FileWriter filew = new FileWriter(file);
+		BufferedWriter writer =  new BufferedWriter(filew);
+		PrintWriter wr = new PrintWriter(writer); 
+		wr.write(" ");
+		List<Neuron> neurons = new ArrayList<Neuron>();	
+		writer.write("// Trained status = "+Main.trained);
+		writer.newLine();
+		writer.write("// Topology = "+Main.topology);
+		writer.newLine();
+		writer.write("// Number of neurons = "+ Neuron.numberOfNeuronsCreated());
+		writer.newLine();		
+		writer.write("// Layer information: (layer_position {neuron_i = status_i, ...})");
+		writer.newLine();
+		writer.newLine();
+		List<Integer> top = new ArrayList<Integer>();
+		
+		Map<Integer, Double> umbralState = new HashMap<Integer, Double>();
+		umbralState.put(NeuralNetwork.getN0().getNumber(), NeuralNetwork.getN0().getState());
+		writer.write("# "+NeuralNetwork.getUmbralLayer().getLayerPosition()+ " "+ umbralState);
+		writer.newLine();
+		for(Layer layer:network.getNetwork()){
+			top.add(layer.getNumberOfNeurons());
+			Map<Integer, Double> neuronsStates = new HashMap<Integer, Double>();
+			for(Neuron neuron:layer.getNeurons()){
+				neuronsStates.put(neuron.getNumber(), neuron.getState());
+				neurons.add(neuron);
+			}
+			
+			writer.write("# "+layer.getLayerPosition().toString()+ " "+ neuronsStates);
+			writer.newLine();
+		}
+		writer.newLine();
+		writer.write("// Synapsys information: (neuron_j neuron_i weight)");
+		writer.newLine();
+		writer.newLine();
+	
+		for(Synapse synapse:network.getSynapses()){
+			for(Neuron outNeuron:synapse.getLayerOutput().getNeurons()){
+				String key="";
+				Double weight = 0.0;
+				for(Neuron inNeuron:synapse.getLayerInput().getNeurons()){
+					key = ""+outNeuron.getNumber()+","+inNeuron.getNumber();
+					weight = network.getWeight(outNeuron, inNeuron);
+					writer.write("$ "+key+", "+ weight);
+					writer.newLine();
+				}
+			}
+		}
+		
+		List<Neuron> input = network.getNetwork().get(0).getNeurons();
+		for(Neuron n:input){
+			neurons.remove(n);
+		}
+		
+		for(Neuron n:neurons){
+			Double weight = NeuralNetwork.getUmbralSynapse().getWeight(NeuralNetwork.getN0(), n);
+			writer.write("$ "+NeuralNetwork.getN0().getNumber()+","+ n.getNumber()+","+weight);
+			writer.newLine();
+		}
+	
+		wr.close();
+		writer.close();
+	}
+
+	private static String treatNetworkLine(String line){
+		Integer beginIndex = line.indexOf("=");
+		Integer endIndex = line.length();
+		return line.substring(beginIndex+1, endIndex);
+	}
+	
+	// Read a file and create a neural network from it
+	public static NeuralNetwork loadNeuralNetwork(String file) throws IOException{
+		FileReader fileReader = new FileReader(file);	
+		BufferedReader bufferReader = new BufferedReader(fileReader);
+		String line ="";
+		NeuralNetwork net = null;
+		Map<Integer, Map<Integer,Double>> layerMap = new HashMap<Integer, Map<Integer,Double>>();
+		Map<Integer, Map<Integer,Double>> synapsysMap = new HashMap<Integer, Map<Integer,Double>>();
+
+		while ((line = bufferReader.readLine())!=null) {
+			if(line.contains("Trained")){
+				Boolean trained = new Boolean(treatNetworkLine(line).trim());
+				Main.trained = trained;
+			}
+			
+			if(line.contains("Topology")){
+				String topology = treatNetworkLine(line);
+				Main.topology = topology;
+				net = Utilities.networkFromString(topology);
+			}
+			
+			if(line.contains("#")){
+				
+				line = line.replace('#', ' ');
+				String layer = line.substring(0, line.indexOf("{"));
+				String[] data = line.substring(line.indexOf("{")+1, line.length()-1).trim().split(",");
+				Map<Integer, Double> neuronStatus = new HashMap<Integer, Double>();
+				for(int i=0; i< data.length; i++){
+					String[] info = data[i].split("=");
+					Integer neuronNumber = new Integer(info[0].trim());
+					Double status = new Double(info[1].trim());
+					neuronStatus.put(neuronNumber, status );
+				}
+				
+				layerMap.put(new Integer(layer.trim()), neuronStatus);
+			}
+		
+			if(line.contains("$")){
+				line = line.replace('$', ' ');
+				String[] params = line.split(",");
+				Integer out = new Integer(params[0].trim());
+				Integer in = new Integer(params[1].trim());
+				Double weight = new Double(params[2].trim());
+				Map<Integer, Double> value = new HashMap<Integer, Double>();
+				
+				if(synapsysMap.containsKey(out)){
+					value = synapsysMap.get(out);
+					value.put(in, weight);
+					synapsysMap.put(out,value);
+				}else{
+					value.put(in, weight);
+					synapsysMap.put(out,value);
+				}
+				
+				
+			}
+		}
+		
+		Map<Integer,Neuron> neurons = new HashMap<Integer,Neuron>();
+		
+		for(Layer layer:net.getNetwork()){
+			Integer numberLayer = layer.getLayerPosition();
+			if(!numberLayer.equals(-1)){
+				Map<Integer,Double> neuronStatus= layerMap.get(numberLayer);
+				
+				for(Neuron neuron:layer.getNeurons()){
+					Double state = neuronStatus.get(neuron.getNumber());
+					neuron.setState(state);
+					neurons.put(neuron.getNumber(), neuron);
+				}
+			}
+		}
+		
+		for(Synapse synap: net.getSynapses()){
+			for(Integer numOutNeur: synap.getNeuronsInSynapse()){
+				Neuron out = neurons.get(numOutNeur);
+				for(Integer neightbour:synapsysMap.get(numOutNeur).keySet()){
+					Neuron in = neurons.get(neightbour);
+					Double weight = synapsysMap.get(out.getNumber()).get(in.getNumber());
+					synap.setWeight(out, in, weight);
+				}
+			}
+		}
+		
+		Synapse umbral =  NeuralNetwork.getUmbralSynapse();
+		
+	
+		for(Integer neightbour:synapsysMap.get(0).keySet()){
+			Neuron in = neurons.get(neightbour);
+			Double weight = synapsysMap.get(0).get(in.getNumber());
+			umbral.setWeight(NeuralNetwork.getN0(), in, weight);
+		}
+		bufferReader.close();
+		fileReader.close();
+		return net;
+	}
+
+	// Write training statistics
+	public static void writeTrainingStatistics(String file_name) throws IOException{
+		File file = new File(file_name);
+		FileWriter filew = new FileWriter(file);
+		BufferedWriter writer =  new BufferedWriter(filew);
+		writer.write("######## TRAINING STATISTICS ########");
+		writer.newLine();
+		writer.newLine();
+		writer.write("File name: "+file_name.split("_")[0]+".txt");
+		writer.newLine();
+		writer.write("File name: "+Main.probenFile);
+		writer.newLine();
+		writer.newLine();
+		writer.write("Topology: "+Main.topology);
+		writer.newLine();
+		writer.write("Learning constant = "+Main.LEARNING_CONSTANT);
+		writer.newLine();
+		writer.write("Alfa momentum = "+Main.ALFAMOMENTUM);
+		writer.newLine();
+		writer.write("O_max and O_min = "+Main.O_MAX+", "+Main.O_MIN);
+		writer.newLine();
+		writer.write("Output was initialized = "+Main.output_initialized);
+		writer.newLine();
+		writer.write("Training set = "+Statistics.minimumSquaredErrorPercentageInTraining );
+		writer.newLine();
+		writer.write("Number of training examples = "+Statistics.numberOfTrainingExamples );
+		writer.newLine();
+		writer.write("Validation set = "+Statistics.minumumSquaredErrorPercentageInValidation);
+		writer.newLine();
+		writer.write("Number of validation examples = "+Statistics.numberOfValidationExamples);
+		writer.newLine();
+		writer.write("Overfit = "+ Statistics.overfit);
+		writer.newLine();
+		writer.write("Total epochs = "+Statistics.totalEpochsToFinishTraining);
+		writer.newLine();
+		writer.write("Relevant epochs = "+ Statistics.epochToReachBestNN);
+		writer.newLine();
+		writer.close();
+	}
+
+	// Write testing statistics
+	public static void writeTestingStatistics(String file_name) throws IOException{
+		File file = new File(file_name);
+		FileWriter filew = new FileWriter(file, true);
+		BufferedWriter writer =  new BufferedWriter(filew);
+		writer.newLine();
+		writer.append("######## TESTING STATISTICS ########");
+		writer.newLine();
+		writer.write("Mean squared error = "+Statistics.meanSquaredErrorPercentageAtMiniumValidationError);
+		writer.newLine();
+		writer.write("FaliuresClassifying = "+Statistics.faliuresClassifying);
+		writer.newLine();
+		writer.write("Testing examples = "+Statistics.numberOFTestElements);
+		writer.close();
+	}
+}

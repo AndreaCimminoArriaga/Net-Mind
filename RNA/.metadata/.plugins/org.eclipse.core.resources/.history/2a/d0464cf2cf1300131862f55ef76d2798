@@ -1,0 +1,77 @@
+package proben1;
+
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import main.Main;
+
+// TrainingMetrics: This class contains all the formulas described in the paper PROBEN1
+
+public class TrainingMetrics {
+
+	public static List<Double> squaredErrorsForAnEpochOfTrainingSet = new ArrayList<Double>();
+
+	
+	public static Double squaredError(Collection<Double> outputs, List<Double> target){
+		Double sum = 0.0;
+		int i= 0;
+		for(Double out:outputs){
+			Double targetOutput = target.get(i);
+			if(!Main.output_initialised && targetOutput > Main.O_MAX){
+				Main.O_MAX = targetOutput;
+			}
+			if(!Main.output_initialised && targetOutput < Main.O_MIN){
+				Main.O_MIN = targetOutput;
+			}
+			sum += (out - targetOutput);
+		}
+		return sum;
+	}
+	
+	// Formula only for training set.
+	public static Double meanSquaredErrorForTrainingSet(Integer numberOfOutputsNeuron, Integer numberOfExamples){
+		Double sum = 0.0;
+		Double factor_one = (Main.O_MAX - Main.O_MIN) / (numberOfOutputsNeuron * numberOfExamples);
+		for(Double error: squaredErrorsForAnEpochOfTrainingSet){
+			sum += error;
+		}
+		return 100*factor_one*sum;
+	}
+	
+	// Formula only for training set.
+	public static Double meanSquaredErrorForValidationSet(Integer numberOfOutputsNeuron, Integer numberOfExamples){
+		Double sum = 0.0;
+		Double factor_one = (Main.O_MAX - Main.O_MIN) / (numberOfOutputsNeuron * numberOfExamples);
+		for(Double error: squaredErrorsForAnEpochOfTrainingSet){
+			sum += error;
+		}
+		return 100*factor_one*sum;
+	}
+	
+	public static Double Gl(Double Eva, Double Eopt){
+		return 100*((Eva/Eopt) -1 );
+	}
+	
+
+	public static Double Pk(List<Double> Etrs){
+		Double etrMin = Etrs.get(0);
+		Double sum = 0.0;
+		for(Double etr: Etrs){
+			if(etr < etrMin){
+				etrMin = etr;
+			}
+			sum += etr;
+		}
+		System.out.println(sum);
+		System.out.println(etrMin);
+		System.out.println((sum / (Main.STRIP * etrMin)) -1);
+		return 1000*((sum / (Main.STRIP * etrMin)) -1 );
+		
+	}
+	
+	
+
+	
+}

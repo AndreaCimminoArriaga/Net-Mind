@@ -1,0 +1,200 @@
+package objects;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+// BACKPROPAGATION: this class receives a neural network and coach it with the back propagation
+// algorithm and the improvement of the momentum.
+
+public class BackPropagation {
+	// Neural network.
+	private NeuralNetwork neuralNetwork;
+	// Train Data.
+	private CrossValidation data;
+	// Errors Associated to each neuron.
+	private Map<Integer, Double> errors;
+	// The max number of iterations.
+	private Integer numberOfIterations;
+	// Var used to implement the momentum.
+	private Map<Integer, Double> momentum;
+	// Object used to calculate metrics.
+	private TrainingMetrics metrics;
+	// Training Metrics.
+	private Map<String,Double> trainingResults;
+	private Boolean trained;
+	
+	public BackPropagation(NeuralNetwork neuralNetwork, String file) throws IOException {
+		super();
+		
+		if(neuralNetwork == null){
+			throw new IllegalArgumentException("Backpropagation (constructor) : neural network can't be null.");
+
+		}
+		this.trained = false;
+		this.neuralNetwork = neuralNetwork;
+		this.data = new CrossValidation(file);
+		this.errors = new HashMap<Integer, Double>();
+		this.numberOfIterations = (5*this.data.getValidation_examples());
+		this.momentum = new HashMap<Integer,Double>();
+		this.metrics = new TrainingMetrics();
+		this.trainingResults = new HashMap<String, Double>();
+		
+	}
+	
+	// Add training, validation and test data.
+	public void addData(String file) throws IOException {
+		this.data.addData(file);
+	}
+
+	// Formula to calculate the error in an output neuron.
+	private Double outputError(Double neuronState, Double expectedValue){
+		return neuronState*(1-neuronState)*(expectedValue-neuronState);
+	}
+	
+	// Formula to calculate the error in a hidden neuron.
+	private Double hiddenNeuronError(Double neuronState, List<Double> in){
+		Double sum = 0.0;
+		
+		for(Double values:in){
+			sum += values;
+		}
+		
+		return sum*neuronState*(1-neuronState);
+	}
+	
+	// Formula to update the weights
+	private Double correctWeight(Double previousWeight, Neuron neuron, Double errorI){
+		if(!this.momentum.containsKey(neuron.getNumber())){
+			this.momentum.put(neuron.getNumber(), 1.0);
+		}
+		Double momentumValue = ( Main.LEARNING_CONSTANT * neuron.getState() *errorI) + Main.ALFAMOMENTUM * this.momentum.get(neuron.getNumber());
+		this.momentum.put(neuron.getNumber(), momentumValue);
+		return previousWeight + momentumValue;
+	}
+	
+	// Used to train the neural network, when it's call process the data entry in the
+	// network (that saves each ai, exit, in the corresponding neuron) and calculates
+	// the associated error to the output layer neurons.
+	private void processDataInOutputLayer(List<Double> inputData, List<Double> expectedOutput){
+		
+		Map<Neuron, Double> results = neuralNetwork.process(inputData);
+		
+		if(results.size() != expectedOutput.size()){
+			throw new IllegalArgumentException("Backpropagation (processData) : the expectedOutput hasn't the same size as output neurons");
+		}
+		
+		Double errorInOutputLayer = 0.0;
+		int i =0;
+		for(Neuron n: results.keySet()){
+			errorInOutputLayer = this.outputError(n.getState(), expectedOutput.get(i));
+			this.errors.put(n.getNumber(), errorInOutputLayer);
+			i++;
+			correctUmbralWeights(n, errorInOutputLayer);
+			
+		}
+		
+				
+	}
+	
+	// Used to train the neural network, when it's call correct the weights between
+	// two layers: layerj and layeri
+	private void correctWeigths(Layer layerj, Layer layeri){
+		
+		for(Neuron nj: layerj.getNeurons()){
+			List<Double> in = new ArrayList<Double>();
+			
+			for(Neuron ni: layeri.getNeurons()){
+				Double weight = this.getNeuralNetwork().getWeight(nj, ni);
+				Double errorI = this.errors.get(ni.getNumber());			
+				in.add( weight*errorI );
+	
+				Double newWeight = this.correctWeight(weight, nj, errorI);
+				this.getNeuralNetwork().setWeight(nj, ni, newWeight);
+			}
+			
+			// Correcting Umbral weight.
+			if(layerj.getLayerPosition() > 0){
+				Double errorJ = this.hiddenNeuronError(nj.getState(), in);
+				correctUmbralWeights(nj, errorJ);
+				this.errors.put(nj.getNumber(), errorJ);
+			}
+		}
+		
+		
+	}
+	
+	// Used to train the neural network, when it's call correct the umbral weights.
+	private void correctUmbralWeights(Neuron ni, Double errorI){
+		getNeuralNetwork();
+		Neuron n0 = NeuralNetwork.getN0();
+		getNeuralNetwork();
+		Double previousWeight = NeuralNetwork.getUmbralSynapse().getWeight(n0, ni);
+		Double newWeight = this.correctWeight(previousWeight, n0, errorI);
+		NeuralNetwork.getUmbralSynapse().setWeight(n0, ni, newWeight);
+	}
+	
+	// This method train the neural network and returns the metrics obtained
+	public void coachNeuralNetwork() {
+
+		Map<List<Double>, List<Double>> trainingSet = this.data.getTrainingSet();
+
+		if (trainingSet.isEmpty()) {
+			throw new IllegalArgumentException(
+					"Backpropagation (coachNeuralNetwork) : Data can't be empty please fill it using setData()");
+		}
+		
+		// Initializes epoch
+		int iteration = 1;
+
+		// Training with training set
+		for (List<Double> inputData : trainingSet.keySet()) {
+
+			System.out.println("\n---------- step: " + iteration + " ------------\n");
+
+			// feed forward and calculate the errors of the output nodes.
+			processDataInOutputLayer(inputData, trainingSet.get(inputData));
+			Integer numberOfLayers = this.neuralNetwork.getNetwork().size();
+
+			// Begin back propagation.
+			for (int i = (numberOfLayers - 2); 0 <= i; i--) {
+				int nextLayer = i + 1;
+				Layer layeri = this.neuralNetwork.getNetwork().get(nextLayer);
+				Layer layerj = this.neuralNetwork.getNetwork().get(i);
+				correctWeigths(layerj, layeri);
+			}
+
+			List<Double> outputValue = new ArrayList<Double>(this.neuralNetwork.getResults().values());
+
+			// Adding squared error to metrics
+			this.metrics.addError(outputValue, trainingSet.get(inputData));
+
+			// STOP CONTROL
+			// Early stopping
+			if (this.earlyStopControl(epoch)) {
+				break;
+			}
+			// max iteration reached
+			if (epoch == this.numberOfIterations) {
+				System.out
+						.println("*STOP TRAINING: training data is finished, add more and continue training");
+				break;
+			}
+
+			for (String s : this.trainingResults.keySet()) {
+				System.out.println(" -> " + s + " = "
+						+ this.trainingResults.get(s));
+			}
+
+			// Increment epoch
+			iteration++;
+		}
+
+	}
+	
+	
+}

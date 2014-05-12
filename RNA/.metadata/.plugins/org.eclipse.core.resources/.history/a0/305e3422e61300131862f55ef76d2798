@@ -1,0 +1,231 @@
+package neuralNetwork;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+// NEURALNETWORK: As important as the other this class unify all rest. Moreover,
+// it's in charge of process the data from the input of the network.
+public class NeuralNetwork {
+	// Contains all the layer that forms the network.
+	private List<Layer> network;
+	// Contains the synapses between the layers.
+	private List<Synapse> synapses;
+	// Umbral attributes
+	private static Neuron n0 = new Neuron();
+	private static Layer UmbralLayer = new Layer(1,-1);
+	private static Synapse UmbralSynapse = null;
+	// Results by neuron in output layer
+	private Map<Neuron, Double> results;
+	
+	// Constructor to create a network just with an input and an output layer.
+	public NeuralNetwork(int input, int output) {
+		this.network = new ArrayList<Layer>();
+		this.synapses = new ArrayList<Synapse>();
+		this.results = new HashMap<Neuron, Double>();
+		Layer layer0 = new Layer(input, 0);
+		Layer layer1 = new Layer(output, 1);
+
+		network.add(layer0);
+		network.add(layer1);
+	
+		Synapse synapse = new Synapse(layer0, layer1);
+		synapses.add(synapse);
+		
+		// Initializes the n0 virtual neuron synapse
+		UmbralSynapse = new Synapse(UmbralLayer, null);
+	}
+	
+	// Constructor to create a network with a regular hidden layer (all layers with the
+	// same number of neurons).
+	public NeuralNetwork(int input, int hiddenLayers, int hiddenNeurones, int output) {
+		this.network = new ArrayList<Layer>();
+		this.synapses = new ArrayList<Synapse>();
+		this.results = new HashMap<Neuron, Double>();
+		int layerNumber = 0;
+		
+		// Adding First Layer 
+		Layer layer0 = new Layer(input, layerNumber);
+		network.add(layer0);
+		
+		// Adding Hidden Layer 
+		while(layerNumber < hiddenLayers){
+			layerNumber++;
+			Layer layerHidden = new Layer( hiddenNeurones, layerNumber);
+			network.add(layerHidden);
+			Synapse synapse = new Synapse( network.get(layerNumber-1), network.get(layerNumber) );
+			synapses.add(synapse);
+			
+		}
+		
+		// Adding Last Layer 
+		layerNumber++;
+		Layer layerf = new Layer(output, layerNumber);
+		network.add(layerf);
+		Synapse synapse = new Synapse(network.get(layerNumber-1), network.get(layerNumber));
+		synapses.add(synapse);
+		
+		// Initializes the n0 virtual neuron synapse
+		UmbralSynapse = new Synapse(UmbralLayer, null);
+	}
+	
+	// Constructor to create a network with any topology. In the array it's possible
+	// to indicate the number of neurons we wont in each of the hidden layers (specified 
+	// in the same order as we wont to appear them).
+	public NeuralNetwork(int input, int hiddenLayers, int[] hiddenNeurones, int output) {
+			this.network = new ArrayList<Layer>();
+			this.synapses = new ArrayList<Synapse>();
+			this.results = new HashMap<Neuron, Double>();
+			int layerNumber = 0;
+			
+			// Adding First Layer 
+			Layer layer0 = new Layer(input, layerNumber);
+			network.add(layer0);
+			
+			// Adding Hidden Layer 
+			while(layerNumber < hiddenLayers){
+				layerNumber++;
+				Layer layerHidden = new Layer( hiddenNeurones[layerNumber-1], layerNumber);
+				network.add(layerHidden);
+				Synapse synapse = new Synapse( network.get(layerNumber-1), network.get(layerNumber) );
+				synapses.add(synapse);
+				
+			}
+			
+			// Adding Last Layer 
+			layerNumber++;
+			Layer layerf = new Layer(output, layerNumber);
+			network.add(layerf);
+			Synapse synapse = new Synapse(network.get(layerNumber-1), network.get(layerNumber));
+			synapses.add(synapse);
+		
+			// Initializes the n0 virtual neuron synapse
+			UmbralSynapse = new Synapse(UmbralLayer, null);
+		}
+		
+	
+	public static Neuron getN0() {
+		return n0;
+	}
+
+	public static Layer getUmbralLayer() {
+		return UmbralLayer;
+	}
+
+	public static Synapse getUmbralSynapse() {
+		return UmbralSynapse;
+	}
+
+	public List<Layer> getNetwork() {
+		return network;
+	}
+
+	public List<Synapse> getSynapses() {
+		return synapses;
+	}
+
+
+	// Returns the output of the neural network
+	public Map<Neuron, Double> getResults() {
+		
+		for (Neuron n : this.getOutputLayer().getNeurons()) {
+			this.results.put(n, n.getState());
+		}
+		return this.results;
+
+	}
+
+	// Given an entry executes it over the neural network
+	public Map<Neuron, Double> process(List<Double> dataEntry) {
+		if (dataEntry.size() != network.get(0).getNumberOfNeurons()) {
+			throw new IllegalArgumentException(
+					"NeuralNetwork (process) : the data entry size ("
+							+ dataEntry.size()
+							+ ") is grather or lower than the input neurons ("
+							+ network.get(0).getNumberOfNeurons());
+		}
+
+		// Processing data in the initial layer.
+		int i = 0;
+		for (Neuron n : network.get(0).getNeurons()) {
+			Double value = dataEntry.get(i);
+			List<Double> initialWeights = new ArrayList<Double>();
+			initialWeights.add(1.0);
+			List<Double> data = new ArrayList<Double>();
+			data.add(value);
+			n.inputFunction(data, initialWeights);
+			i++;
+		}
+
+		// Processing data in the rest of the layers
+		i = 0;
+		while (i + 1 < network.size()) {
+			processTwoLayers(network.get(i), network.get(i + 1), i);
+			i++;
+		}
+		
+		return this.getResults();
+	}
+	
+	// Used in the previous function, executes the appropriate operations for 
+	// the layer i using the previous layer j.
+	private void processTwoLayers(Layer layerj, Layer layeri, Integer synapseNumber) {
+		
+		for (Neuron ni : layeri.getNeurons()) {
+			// Outputs and weights of the neurons in the previous layer "layerj"
+			// connected with the ni node in the layeri (current).
+			List<Double> weightsNjsNi = new ArrayList<Double>();
+			List<Double> ajsValues = new ArrayList<Double>();
+			
+			for (Neuron nj : layerj.getNeurons()) {
+				
+				Synapse synapses = this.synapses.get(synapseNumber);
+				weightsNjsNi.add(synapses.getWeight(nj, ni));
+				ajsValues.add(nj.getState());
+			
+			}
+			
+			ajsValues.add(n0.getState());
+			weightsNjsNi.add(UmbralSynapse.getWeight(n0, ni));
+			ni.inputFunction(ajsValues, weightsNjsNi);
+		}
+	}
+	
+	// Given a neuron returns all the weights of the edges that 
+	// leave the neuron.
+	public List<Double> getWeights(Neuron n){
+		List<Double> weights = new ArrayList<Double>();
+		
+		for(Synapse s:this.synapses){
+			if(s.belongsHere(n)){
+				weights = s.getWeights(n);
+			}
+		}
+		return weights;
+		
+	}
+	
+	// Allows to get the weight between two neurons without operate with the
+	// synapses.
+	public Double getWeight(Neuron outputNeuron, Neuron inputNeuron){
+		Double weight = 0.0;
+		for(Synapse s:this.synapses){
+			if(s.belongsHere(outputNeuron)){
+				weight = s.getWeight(outputNeuron, inputNeuron);
+			}
+		}
+		return weight;
+	}
+	
+	// Allows to set the weight between two neurons without operate with the
+	// synapses.
+	public void setWeight(Neuron outputNeuron, Neuron inputNeuron, Double newWeight){
+		for(Synapse s:this.synapses){
+			if(s.belongsHere(outputNeuron)){
+				s.setWeight(outputNeuron, inputNeuron, newWeight);
+			}
+		}
+	}
+
+}

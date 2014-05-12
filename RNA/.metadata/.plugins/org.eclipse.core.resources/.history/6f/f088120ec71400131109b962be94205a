@@ -1,0 +1,20 @@
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Double d1 = 1.0;
+		Double d2 = 2.0;
+		List<Double> doubles = new ArrayList<Double>();
+		doubles.add(d1);
+		doubles.add(d2);
+		Double mean = Traductor.mean(doubles);
+		Double stdev = Traductor.stddev(doubles, mean);
+		System.out.println("- "+mean+", "+stdev);
+		
+	}
+
+}

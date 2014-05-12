@@ -1,0 +1,130 @@
+package neuralNetwork;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+// SYNAPSE: Represents the connection of the neurons between two layers. This class contains
+// the connections (like and adjacent matrix more or less ) and the weights of each connection.
+
+public class Synapse {
+	
+	private Map<Integer, List<Integer>> synapses;
+	private Map<Integer, List<Double>> weights;
+	private Integer layerNumber;
+	private Layer layerOutput, layerInput;
+	
+	// Constructor: initializes the weights as 1.0.
+	public Synapse(Layer layer0, Layer layer1){
+		synapses = new HashMap<Integer, List<Integer>>();
+		weights = new HashMap<Integer, List<Double>>();
+		if (layer0.getLayerPosition() >= 0) {
+			for (Neuron n : layer0.getNeurons()) {
+				List<Integer> neighbours = new ArrayList<Integer>();
+				List<Double> associatedWeights = new ArrayList<Double>();
+
+				for (Neuron n1 : layer1.getNeurons()) {
+					neighbours.add(n1.getNumber());
+					associatedWeights.add(this.randomWeight());
+				}
+
+				synapses.put(n.getNumber(), neighbours);
+				weights.put(n.getNumber(), associatedWeights);
+			}
+			layerNumber = layer0.getLayerPosition();
+			layerInput = layer1;
+			layerOutput = layer0;
+		} else {
+			List<Integer> neighbours = new ArrayList<Integer>();
+			List<Double> associatedWeights = new ArrayList<Double>();
+			
+			for(int i=1; i <= Neuron.numberOfNeuronsCreated(); i++){
+				neighbours.add(i);
+				associatedWeights.add(this.randomWeight());
+				
+			}
+			
+			synapses.put(0, neighbours);
+			weights.put(0, associatedWeights);
+			layerNumber = -1;
+		}
+		
+	}
+	
+	// Returns a random value for an edge's weight from range -1.0..1.0 (-1.0 and 1.0 not included)
+	private Double randomWeight(){
+		Long bin =  Math.round(Math.random()*10) %2 ;
+		Double number = (Math.random()/10);
+	
+		if(bin == 1){
+			number = number*(-1);
+		}
+		return number;
+	}
+	
+	// Check if two neurons are connected.
+	private Boolean areNeighbours(Neuron outputNeuron, Neuron inputNeuron){
+		if(!this.synapses.containsKey(outputNeuron.getNumber())){
+			throw new IllegalArgumentException("Synapses (areNeighbours) : the outputNeuron ("+outputNeuron.getNumber()+") dosen't belongs to this layer ("+this.layerNumber+")");
+		}
+		
+		List<Integer> neighbour = this.synapses.get(outputNeuron.getNumber());
+		
+		return neighbour.contains(inputNeuron.getNumber());
+	}
+	
+	// Given two neurons returns the weight of the edge that joins them.
+	public Double getWeight(Neuron outputNeuron, Neuron inputNeuron){
+		Double weight = null;
+		if(areNeighbours(outputNeuron, inputNeuron)){
+			List<Integer> neighbour = this.synapses.get(outputNeuron.getNumber());
+			List<Double> weights = this.weights.get( outputNeuron.getNumber() );
+			int index = neighbour.indexOf(inputNeuron.getNumber());
+			weight = weights.get(index);
+		}	
+		return weight;
+	}
+	
+	// Given two neurons and a weight changes the associated value, if exists, in that edge.
+	public void setWeight(Neuron outputNeuron, Neuron inputNeuron, Double newWeight){
+		
+		if(areNeighbours(outputNeuron, inputNeuron)){
+			List<Integer> neighbour = this.synapses.get(outputNeuron.getNumber());
+			List<Double> weights = this.weights.get( outputNeuron.getNumber() );
+			int index = neighbour.indexOf(inputNeuron.getNumber());
+			weights.set(index, newWeight);
+		}	
+	}
+	
+	// Return true if a neuron belongs to the layer with edges in the output.
+	public Boolean belongsHere(Neuron neuron){
+		return synapses.containsKey(neuron.getNumber());
+	}
+	
+	// Return the layer in with the edges in the output.
+	public Set<Integer> getNeuronsInSynapse(){
+		return synapses.keySet();
+	}
+	
+	// Given a neuron returns all the weights of the edges that 
+	// leave the neuron.
+	public List<Double> getWeights(Neuron n){
+		List<Double> weights = new ArrayList<Double>();
+		if(belongsHere(n)){
+			weights = this.weights.get(n.getNumber());
+		}
+		return weights;
+	}
+
+	public Layer getLayerOutput() {
+		return layerOutput;
+	}
+
+	public Layer getLayerInput() {
+		return layerInput;
+	}
+	
+	
+}

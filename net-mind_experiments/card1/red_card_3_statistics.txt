@@ -1,0 +1,22 @@
+######## TRAINING STATISTICS ########
+
+File name: red_card_3.txt
+Proben file: card1/card1.dt
+
+Topology: 51,1,25,2
+Learning constant = 0.8
+Alfa momentum = 0.05
+O_max and O_min = 1.0, 0.0
+Output was initialized = true
+Number of training examples = 345
+Training minimum mean squared error = 29.503877110838925
+Number of validation examples = 173
+Validation minimum mean squared error = 18.39910827293118
+Overfit = 23.690869283691885
+Total epochs = 10
+Relevant epochs = 5
+
+######## TESTING STATISTICS ########
+Testing examples = 172
+Mean squared error = 44.44537311412155
+FaliuresClassifying = 1

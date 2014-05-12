@@ -1,0 +1,22 @@
+######## TRAINING STATISTICS ########
+
+File name: red_cancer_5.txt
+Proben file: cancer1/cancer1.dt
+
+Topology: 9,2
+Learning constant = 0.4
+Alfa momentum = 0.15
+O_max and O_min = 1.0, 0.0
+Output was initialized = false
+Number of training examples = 350
+Training minimum mean squared error = 5.463193691649254
+Number of validation examples = 175
+Validation minimum mean squared error = 1.4265299054627096
+Overfit = 6.237933000040252
+Total epochs = 45
+Relevant epochs = 25
+
+######## TESTING STATISTICS ########
+Testing examples = 174
+Mean squared error = 4.643076087582454
+FaliuresClassifying = 33

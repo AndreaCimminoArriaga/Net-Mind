@@ -1,0 +1,142 @@
+package proben1;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import backpropagation.BackPropagation;
+import main.Main;
+import neuralNetwork.NeuralNetwork;
+
+// Proben1 : This class contains all the algorithms described in the paper with
+// 			 the same name. 
+
+public class Proben1 {
+	// This attribute will contain, separately, all the data from the specified file.
+	private DataContainer data;
+	// This attribute will contain the neural network.
+	private NeuralNetwork neuralNetwork;
+
+	
+	// Constructor.
+	public Proben1(NeuralNetwork neuralNetwork, String dataFile ) throws IOException{
+		this.data = new DataContainer(dataFile);
+		this.neuralNetwork = neuralNetwork;
+		
+	}
+	
+	// Calculates the Etr associated to an epoch, or what is the same, calculates the
+	// mean squared error associated to all the examples in the training set. In order to
+	// make it more efficient i have already calculate the squared error in the backpropagation
+	// and stored them in the object TrainingMetrics in the attribute squaredErrorsForAnEpoch. 
+	// So in this method we just have to calculate the mean error.
+	private Double processAnEpoch(){
+		BackPropagation bPorp = new BackPropagation(this.neuralNetwork, data.getTrainingSet());
+		this.neuralNetwork = bPorp.coachNeuralNetwork();
+		Double Etr = TrainingMetrics.meanSquaredErrorForTrainingSet(this.neuralNetwork.getOutputLayer().getNumberOfNeurons(), this.data.getNumberOfTrainingExamples());
+		return Etr;
+	}
+	
+	// Process the data until a stop criteria is reached.
+	public NeuralNetwork trainingProcess(){
+		System.out.println("");
+		System.out.print("- Training the network");
+		// Initializes the epoch.
+		Integer epoch = 1;
+		// Will contain the Etrs until the epoch coincides with the strip.
+		List<Double> Etrs = new ArrayList<Double>();
+		
+		// Processing an Epoch.
+		while (epoch < Main.MAX_EPOCHS){
+			System.out.print("...");
+			// Calculating the Etr associated to this epoch.
+			Double Etr = processAnEpoch();
+			Etrs.add(Etr);
+			
+			// If the epoch coincides with the STRIP. 
+			if(epoch % Main.STRIP == 0){
+				
+				// Calculating the parameter Gl.
+				Double Eva = this.iterateOverTheValidationSet();
+				Double Eopt = TrainingMetrics.Eopt();
+				Double Gl = TrainingMetrics.Gl(Eva, Eopt);
+				
+				
+				// Calculating the parameter Pk.
+				Double Pk = TrainingMetrics.Pk(Etrs);
+				
+				
+				// Saving the best network and other statistics
+				if (Statistics.bestEva > Eva){
+					Statistics.bestNN = this.neuralNetwork;
+					Statistics.bestEva = Eva;
+					Statistics.epochToReachBestNN = epoch;
+				}
+				
+				// Saving the overfit statistic.
+				Statistics.overfit = Gl;
+				
+				// Checking if any stop criteria has been reached.
+				if(stopAlgorithm(Gl, Pk)){
+					break;
+				}
+				
+				// Cleaning the Etrs Errors associated to this STRIP.
+				Etrs.clear();
+			}
+			
+			epoch++;
+		}
+		
+		//Saving total epoch statistic.
+		Statistics.totalEpochsToFinishTraining = epoch;
+		System.out.println("");
+		System.out.println("- Trained finished.");
+		System.out.println("- A file txt with the training statistics has been created in the same root of this file.");
+		return Statistics.bestNN;
+	}
+	
+	// Calculates the Eva when the epoch coincides with the STRIP, namely the Eva of this STIP.
+	private Double iterateOverTheValidationSet(){
+		List<Double> squaredErrors = new ArrayList<Double>();
+		
+		// Iterating over the validation set
+		for(List<Double> validationInputs: this.data.getValidationSet().keySet()){
+			List<Double> targetOutputs = this.data.getValidationSet().get(validationInputs);
+			Collection<Double> outputs = this.neuralNetwork.process(validationInputs).values();
+			Double error = TrainingMetrics.squaredError(outputs, targetOutputs);
+			//Calculating statistics
+			if(Statistics.minumumSquaredErrorPercentageInValidation > error){
+				Statistics.minumumSquaredErrorPercentageInValidation = error;
+			}
+			squaredErrors.add(error);
+		}
+		Double Eva = TrainingMetrics.meanSquaredError(squaredErrors, this.neuralNetwork.getOutputLayer().getNumberOfNeurons(), this.data.getNumberOfTrainingExamples());
+		TrainingMetrics.Evas.add(Eva);
+		return Eva;
+	}
+	
+	// Indicate if any of the following stop creteria has been reached:
+	//			- Pk < 100.
+	//			- Gl > 5%.
+	private Boolean stopAlgorithm(Double Gl, Double Pk){
+		Boolean stop = false;
+		if( Gl > Main.STRIP){
+			stop = true;
+		}
+		if(Pk < Main.Pk_MIN){
+			stop = true;
+		}
+		
+		
+		return stop;
+	}
+
+	public void testingProcess(){
+		
+		
+		
+		
+	}
+}

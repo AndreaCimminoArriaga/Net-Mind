@@ -1,0 +1,28 @@
+- El programa nn.jar es un archivo jar que permite crear distintas redes con distintas topologias y entrenarlas. Para poder usarlo solo hay que abrir la consola y acceder mediante el comando cd al directorio donde se encuentra. Una vez ahi tecleamos java -jar nn.jar nn [opciones] y listo.
+- Lo que se puede hacer con este programa se puede consultar usando el comando java -jar nn.jar nn -help, entonces nos aparecera una pantalla con la siguiente informacion:
+
+CREATE A DEFAULT CONFIGURATION FILE:
+	1 - Just type "nn create_default_config_file"
+
+ CREATE A NETWORK
+	1 - Just type "nn -new [topology] [network_name]"
+	* three topologies available:
+		Topology A: n, m -> n input neurons, m output neurons.
+		Topology B: n, k, j, m -> n input neurons, k hidden layers with j neurons in each one and m output neurons.
+		Topology C: n, k, [a,b,c,..], m -> n input neurons, k hidden layers with a number of neurons equal as indicated between the '['']' and m output neurons
+	2 - Once created it will appear a file with the network name containing all the data.
+
+LOAD A NETWORK AND TRAIN IT:
+	1 - Just type  "nn -train [network_file] [proben_file]"
+	2 - At the end the neural network obtained will be saved in the same file.
+
+ LOAD A NETWORK AND TEST IT
+	1 - Just type  "nn -test [network_file] [proben_file]"
+	2 - The results will appear in the console.
+
+ CREATE A NETWORK, TRAIN IT AND TEST IT.
+	1 - Just type "nn -ctt [topology] [network_name] [proben_file] "
+	2 - The results will appear in statistic file.
+
+- A la hora de usar el programa es muy importante utilizar la estructura de ficheros descrita en proben o no funcionara.
+- La opcion mas comoda para experimentar es -ctt ya que permite dado un archivo entrenar y testear directamente la red.

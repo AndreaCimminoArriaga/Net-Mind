@@ -1,0 +1,16 @@
+package main;
+
+import proben1.Proben1;
+import neuralNetwork.NeuralNetwork;
+
+public class NNI {
+
+	private NeuralNetwork neuralNetwork;
+	private Proben1 proben;
+	
+	public NNI(NeuralNetwork neuralNetwork, String File){
+		
+	}
+	
+	
+}

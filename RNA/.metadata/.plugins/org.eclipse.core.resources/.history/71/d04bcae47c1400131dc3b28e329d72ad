@@ -1,0 +1,10 @@
+package proben1;
+
+import neuralNetwork.NeuralNetwork;
+
+public class Statistics {
+
+	public static Integer epochToReachBestNN = 0;
+	public static NeuralNetwork bestNN = null;
+	public static Double bestEva = 9999.0;
+}

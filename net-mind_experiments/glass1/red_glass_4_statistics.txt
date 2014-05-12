@@ -1,0 +1,22 @@
+######## TRAINING STATISTICS ########
+
+File name: red_glass_4.txt
+Proben file: glass1/glass1.dt
+
+Topology: 9,4,[8,8,7,6],6
+Learning constant = 0.8
+Alfa momentum = 0.15
+O_max and O_min = 1.0, 0.0
+Output was initialized = false
+Number of training examples = 107
+Training minimum mean squared error = 4.7305688529417855
+Number of validation examples = 54
+Validation minimum mean squared error = 2.3428643655432277
+Overfit = 0.3349115083143728
+Total epochs = 3000
+Relevant epochs = 5
+
+######## TESTING STATISTICS ########
+Testing examples = 53
+Mean squared error = 5.423775122322063
+FaliuresClassifying = 22

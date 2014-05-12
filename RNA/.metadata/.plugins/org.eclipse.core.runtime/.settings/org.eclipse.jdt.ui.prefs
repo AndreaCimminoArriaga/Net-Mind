@@ -1,0 +1,20 @@
+content_assist_disabled_computers=org.eclipse.recommenders.completion.rcp.templates.category\u0000org.eclipse.jdt.ui.javaAllProposalCategory\u0000org.eclipse.jdt.ui.javaNoTypeProposalCategory\u0000org.eclipse.recommenders.completion.rcp.chain.category\u0000org.eclipse.jdt.ui.javaTypeProposalCategory\u0000org.eclipse.jdt.ui.textProposalCategory\u0000org.eclipse.recommenders.subwords.rcp.category\u0000
+content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="java.util.Map"><rhs name\="java.util.HashMap"/></lhs><lhs name\="objects.Neuron"><rhs name\="objects.Neuron"/></lhs><lhs name\="objects.Synapse"><rhs name\="objects.Synapse"/></lhs><lhs name\="java.util.Collection"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.lang.Iterable"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.util.List"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="objects.NeuralNetwork"><rhs name\="objects.NeuralNetwork"/></lhs><lhs name\="objects.BackPropagation"><rhs name\="objects.BackPropagation"/></lhs><lhs name\="objects.CrossValidation"><rhs name\="objects.CrossValidation"/></lhs><lhs name\="objects.Metrics"><rhs name\="objects.Metrics"/></lhs><lhs name\="java.util.Iterator"><rhs name\="java.util.Scanner"/></lhs><lhs name\="java.io.Closeable"><rhs name\="java.util.Scanner"/></lhs><lhs name\="java.lang.AutoCloseable"><rhs name\="java.util.Scanner"/></lhs><lhs name\="objects.NeuralNetworkInterface"><rhs name\="objects.NeuralNetworkInterface"/></lhs><lhs name\="java.lang.Number"><rhs name\="java.lang.Integer"/></lhs><lhs name\="proben1.DataContainer"><rhs name\="proben1.DataContainer"/></lhs><lhs name\="backpropagation.BackPropagation"><rhs name\="backpropagation.BackPropagation"/></lhs><lhs name\="main.NNI"><rhs name\="main.NNI"/></lhs><lhs name\="proben1.Proben1"><rhs name\="proben1.Proben1"/></lhs></history>
+content_assist_number_of_computers=21
+content_assist_proposals_background=255,255,255
+content_assist_proposals_foreground=0,0,0
+eclipse.preferences.version=1
+fontPropagated=true
+org.eclipse.jdt.ui.editor.tab.width=
+org.eclipse.jdt.ui.formatterprofiles.version=12
+org.eclipse.jdt.ui.javadoclocations.migrated=true
+org.eclipse.jdt.ui.text.code_templates_migrated=true
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+org.eclipse.jdt.ui.text.custom_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+org.eclipse.jdt.ui.text.templates_migrated=true
+org.eclipse.jface.textfont=1|Monaco|11.0|0|COCOA|1|;
+proposalOrderMigrated=true
+spelling_locale_initialized=true
+tabWidthPropagated=true
+useAnnotationsPrefPage=true
+useQuickDiffPrefPage=true

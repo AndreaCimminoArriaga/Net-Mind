@@ -1,0 +1,14 @@
+import java.util.ArrayList;
+
+
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Double d1 = 1.0;
+		
+		List<Double> doubles = new ArrayList<Double>();
+		
+	}
+
+}

@@ -1,0 +1,25 @@
+- C3po permite, una vez terminada la experimentacion, resumir y traducir todos los ficheros "_statistics" a un archivo csv donde se indican las medidas conseguidas en cada ejecucion independiente y el calculo del rendimiento medio para todas las ejecuciones. En pocas paralabras presenta los datos tal y como se nos pide en el trabajo y como se muestran en proben.
+- Para usarlo simplemente hay que acceder al directorio donde se ecuentra usando el comando de consola cd y una vez ahi teclear java -jar c3po.jar c3po [directorio]. El directorio que se le especifica debe acerse usando una ruta absoluta, ademas ese directorio debera contener los archivos "_statistics" generados por nn.jar. En caso de no existir dichos ficheros no ocurrira nada.
+- Para conocer el funcionamiento del programa tambien puede teclearse la opcion java -jar c3po.jar c3po entonces aparecera por pantalla:
+
+####################################################################
+      .-.									
+     /_ _\			 CCCCCC 3333333 PPPPPPP	  OOOOOOO  		    
+     |o^o|			CCCC        33	PPP  PPP OOO   OOO		
+     \ _ /			CCCC	  33333	PPPPPPP	 OOO   OOO		
+    .-'-'-.			CCCC        333	PPPP	 OOO   OOO              
+  /`)  .  (`\		 	 CCCCCC	3333333	PPPP	  OOOOOOO		
+ / /|.-'-.|\ \									
+ \ \| (_) |/ /  			- USER'S MANUAL -			
+  \_\'-.-'/_/  									
+  /_/ \_/ \_\ 			# Usage: c3po [directory]			
+    |'._.'|  		# C3po will manage all the statistics file in 	
+    |  |  | 		# the directory and will generate a csv	file	
+     \_|_/   		#  with a sumary of all of them.			
+     |-|-|    									
+     |_|_|    									
+    /_/ \_\  									
+####################################################################
+
+
+- Es importante indicar un directorio valido(absoluto), y no otro valor o el programa no funcionara.

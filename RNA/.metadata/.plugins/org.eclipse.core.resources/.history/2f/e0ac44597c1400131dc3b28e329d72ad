@@ -1,0 +1,6 @@
+package proben1;
+
+public class Statistics {
+
+	private static Integer epochToReachBestNN = 0;
+}

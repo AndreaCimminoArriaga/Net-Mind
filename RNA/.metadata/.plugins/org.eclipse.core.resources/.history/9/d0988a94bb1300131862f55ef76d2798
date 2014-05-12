@@ -1,0 +1,17 @@
+package objects;
+
+import java.io.IOException;
+import java.util.Map;
+
+public class NeuralNetworkInterface {
+	
+	private NeuralNetwork neuralNetwork;
+	private BackPropagation backPropagation;
+	
+	public NeuralNetworkInterface() {
+		super();
+	}
+	
+
+
+	}

@@ -1,0 +1,158 @@
+package proben1;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class DataContainer {
+	
+	private Map<List<Double>,List<Double>> testSet;
+	private Map<List<Double>,List<Double>> trainingSet;
+	private Map<List<Double>,List<Double>> validationSet;
+	private Integer bool_in;
+	private Integer real_in;
+	private Integer bool_out;
+	private Integer real_out;
+	private Integer training_examples;
+	private Integer validation_examples;
+	private Integer test_examples;
+
+	public DataContainer(String fileName) throws IOException {
+		super();
+		this.testSet = new HashMap<List<Double>, List<Double>>();
+		this.trainingSet =  new HashMap<List<Double>, List<Double>>();
+		this.validationSet =  new HashMap<List<Double>, List<Double>>();
+		this.readFile(fileName);
+		
+		//Calculating statistics
+		Statistics.numberOfTrainingExamples = this.training_examples;
+		Statistics.numberOfValidationExamples = this.validation_examples;
+		Statistics.numberOFTestElements = this.test_examples;
+	}
+		
+	// Reads the file and initializes the params of this class.
+	@SuppressWarnings("resource")
+	private Map<List<Double>, List<Double>> readFile(String file) throws IOException{
+		FileReader fileReader = new FileReader(file);	
+		BufferedReader bufferReader = new BufferedReader(fileReader);
+		String line ="";
+		Map<List<Double>,List<Double>> data = new HashMap<List<Double>,List<Double>>();
+		Integer counter = 0;
+		
+		while ((line = bufferReader.readLine())!=null) {
+			
+			if(line.contains("bool_in")){
+				// Calculating the booleans input neurons.
+				this.bool_in = new Integer(line.substring(line.indexOf("=")+1));
+			}else if(line.contains("real_in")){
+				// Calculating the real input neurons.
+				this.real_in = new Integer(line.substring(line.indexOf("=")+1));
+			}else if(line.contains("bool_out")){
+				// Calculating the booleans output neurons,
+				this.bool_out = new Integer(line.substring(line.indexOf("=")+1));
+			}else if(line.contains("real_out")){
+				// Calculating the real output neurons.
+				this.real_out = new Integer(line.substring(line.indexOf("=")+1));
+			}else if(line.contains("training_examples")){
+				// Calculating the number of training examples.
+				this.training_examples = new Integer(line.substring(line.indexOf("=")+1));
+			}else if(line.contains("validation_examples")){
+				// Calculating the number of validation examples.
+				this.validation_examples = new Integer(line.substring(line.indexOf("=")+1));
+			}else if(line.contains("test_examples")){
+				// Calculating the number of test examples.
+				this.test_examples = new Integer(line.substring(line.indexOf("=")+1));
+			}else{
+				// Adding the line to data.
+				List<Double> key = new ArrayList<Double>();
+				List<Double> value = new ArrayList<Double>();
+				Integer beginIndex = 0;
+				Integer endIndex = 0;
+				
+				if(this.bool_in == 0){
+					beginIndex = this.real_in;
+				}else{
+					beginIndex = this.bool_in;
+				}
+				
+				if(this.bool_out == 0){
+					endIndex = this.real_out;
+				}else{
+					endIndex = this.bool_out;
+				}
+				
+				// Extracting pairs.
+				String[] subLine = line.split(" ");
+				for(int i=0; i<beginIndex; i++){
+					key.add(new Double(subLine[i]));
+				}
+				for(int i=0; i<endIndex; i++){
+					value.add(new Double(subLine[i]));
+				}
+				
+				// Adding each pair to the corresponding set.
+				if( counter < this.training_examples){
+						if(this.trainingSet.containsKey(key)){
+							System.out.println("Alredy in");
+						}
+						this.trainingSet.put(key, value);
+				}else if (counter < ( this.training_examples + this.validation_examples) ){
+						this.validationSet.put(key, value);
+				}else{
+					this.testSet.put(key, value);
+				}
+				
+				counter++;
+				
+			}
+			
+		}
+		return data;
+	}
+	
+	// Getters and Setters
+	public Map<List<Double>, List<Double>> getTestSet() {
+		return testSet;
+	}
+
+	public Map<List<Double>, List<Double>> getTrainingSet() {
+		return trainingSet;
+	}
+
+	public Map<List<Double>, List<Double>> getValidationSet() {
+		return validationSet;
+	}
+	
+	public Integer getBool_in() {
+		return bool_in;
+	}
+
+	public Integer getReal_in() {
+		return real_in;
+	}
+
+	public Integer getBool_out() {
+		return bool_out;
+	}
+
+	public Integer getReal_out() {
+		return real_out;
+	}
+
+	
+	public Integer getNumberOfTrainingExamples() {
+		return training_examples;
+	}
+
+	public Integer getNumberOfValidationExamples() {
+		return validation_examples;
+	}
+	
+	public Integer getNumberOfTestExamples() {
+		return test_examples;
+	}
+}

@@ -1,0 +1,28 @@
+{
+  "/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home/jre/lib/rt.jar": {
+    "coordinate": "jre:jre:zip:call:1.0.0",
+    "location": "/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home/jre/lib/rt.jar",
+    "status": "RESOLVED",
+    "error": "No call model found for \u0027/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home/jre/lib/rt.jar\u0027. Neither fingerprint \u0027566b2b5e83677752bcae9631b3a8d510f79bb81e\u0027 nor symbolic name \u0027jre\u0027 are known."
+  },
+  "/Users/andrea_arriaga_5/Desktop/RNA/RNA/src": {
+    "location": "/Users/andrea_arriaga_5/Desktop/RNA/RNA/src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027/Users/andrea_arriaga_5/Desktop/RNA/RNA/src\u0027. Skipped."
+  },
+  "/Users/andrea_arriaga_5/Downloads/guava-14.0.1.jar": {
+    "coordinate": "com.google.guava:com.google.guava:zip:call:10.0.0",
+    "location": "/Users/andrea_arriaga_5/Downloads/guava-14.0.1.jar",
+    "status": "RESOLVED"
+  },
+  "/Users/andrea_arriaga_5/Downloads/javacsv2.1/javacsv.jar": {
+    "location": "/Users/andrea_arriaga_5/Downloads/javacsv2.1/javacsv.jar",
+    "status": "UNRESOLVED",
+    "error": "No call model found for \u0027/Users/andrea_arriaga_5/Downloads/javacsv2.1/javacsv.jar\u0027. Neither fingerprint \u0027afed46cadd463453bbf007625ecfa3afac097f37\u0027 nor symbolic name \u0027javacsv\u0027 are known."
+  },
+  "/Users/andrea_arriaga_5/Desktop/RNA/C3PO/src": {
+    "location": "/Users/andrea_arriaga_5/Desktop/RNA/C3PO/src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027/Users/andrea_arriaga_5/Desktop/RNA/C3PO/src\u0027. Skipped."
+  }
+}

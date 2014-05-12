@@ -1,0 +1,22 @@
+######## TRAINING STATISTICS ########
+
+File name: red_horse_5.txt
+Proben file: horse1/horse1.dt
+
+Topology: 58,1,10,3
+Learning constant = 0.8
+Alfa momentum = 0.05
+O_max and O_min = 1.0, 0.0
+Output was initialized = true
+Number of training examples = 182
+Training minimum mean squared error = 11.121756164172055
+Number of validation examples = 91
+Validation minimum mean squared error = 6.186012557857769
+Overfit = 10.746637574600948
+Total epochs = 30
+Relevant epochs = 5
+
+######## TESTING STATISTICS ########
+Testing examples = 91
+Mean squared error = 12.279202324162329
+FaliuresClassifying = 37

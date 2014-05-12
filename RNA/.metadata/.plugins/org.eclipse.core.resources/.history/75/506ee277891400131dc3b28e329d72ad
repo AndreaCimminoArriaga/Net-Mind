@@ -1,0 +1,29 @@
+package proben1;
+
+import neuralNetwork.NeuralNetwork;
+
+public class Statistics {
+	// TRAINING STATISTICS
+	
+	// Training Set
+	public static Double minimumSquaredErrorPercentageInTraining = 9999.0;
+	// Validation Set
+	public static Double minumumSquaredErrorPercentageInValidation = 99999.0;
+	// Total Epoch
+	public static Integer totalEpochsToFinishTraining = 0;
+	//Overfit
+	public static Double overfit = 0.0;
+	//Relevant Epochs
+	public static Integer epochToReachBestNN = 0;
+	public static NeuralNetwork bestNN = null;
+	public static Double bestEva = 9999.0;
+	
+	// TEST STATISTICS
+	
+	// Test Set.
+	public Double squaredErrorPercentageAtMiniumValidationError = 0.0;
+	//Test set Clasification
+	public Integer faliuresClassifying = 0;
+	
+	
+}

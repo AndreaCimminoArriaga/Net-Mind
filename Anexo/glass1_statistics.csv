@@ -1,0 +1,15 @@
+Proben File,Network Name - Topology,Learning constant,Alphamomentum,O_max,O_min,Outputs were initialized,Number of traning examples,Minimum mean squared error reached on training,Number of validation examples,Minimum mean squared error reached on validation,Overfit,Total epochs,Relevant epoch,Number of test examples,Mean squared error on testing,Number of Faliures Classifying
+glass1/glass1.dt,"red_glass_10.txt : 9,5,20,6",0.8,0.15,1.0,0.0,false,107,5.280930257504077,54,2.3271546181890903,0.8473381375165401,3000,5,53,5.415555864923758,22
+glass1/glass1.dt,"red_glass_1.txt : 9,6",0.16,0.05,1.0,0.0,false,107,4.348753371054357,54,2.2477989893801773,5.637786875888273,50,5,53,5.505099869552823,22
+glass1/glass1.dt,"red_glass_2.txt : 9,6",0.8,0.05,1.0,0.0,false,107,4.992048575999651,54,2.3120655352263633,6.866068213410026,15,5,53,5.734608819903119,22
+glass1/glass1.dt,"red_glass_3.txt : 9,6",0.8,0.15,1.0,0.0,false,107,5.038137665296021,54,2.3169953052344066,6.902008910406465,15,5,53,5.740571977226479,22
+glass1/glass1.dt,"red_glass_4.txt : 9,4,[8,8,7,6],6",0.8,0.15,1.0,0.0,false,107,4.7305688529417855,54,2.3428643655432277,0.3349115083143728,3000,5,53,5.423775122322063,22
+glass1/glass1.dt,"red_glass_5.txt : 9,4,[8,8,7,6],6",0.8,0.05,1.0,0.0,false,107,4.7296180400098216,54,2.1695612168824137,5.229954722466745,2275,1885,53,5.180302530951389,22
+glass1/glass1.dt,"red_glass_6.txt : 9,4,[8,8,7,6],6",0.8,0.55,1.0,0.0,false,107,4.954149612763481,54,2.259845988477803,0.055296954525396735,3000,10,53,5.205800445963494,22
+glass1/glass1.dt,"red_glass_7.txt : 9,6",0.8,0.05,1.0,0.0,true,107,5.012255514893572,54,2.321082076603879,6.980392901934462,15,5,53,5.758658287460278,22
+glass1/glass1.dt,"red_glass_8.txt : 9,1,1,6",0.8,0.05,1.0,0.0,true,107,4.333256838332797,54,2.2602258387217726,12.641577517816561,50,40,53,5.715155808281296,22
+glass1/glass1.dt,"red_glass_9.txt : 9,1,20,6",0.8,0.05,1.0,0.0,true,107,5.211613062514266,54,2.2563521012743837,8.078581458415934,45,40,53,5.619072402451863,22
+
+
+Training Set Mean,Training Set Stddev,Validation Set Mean,Validation Set Stddev,Test Set Mean,Test Set Stddev,Test Set Classification Mean,Test Set Classification Stddev,Overfit Mean,Overfit Stddev,Total Epochs Mean,Total Epochs Stddev,Relevant Epochs Mean,Relevant Epochs Stddev
+"4,8631","0,3090","2,2814","0,0498","5,5299","0,2081","41,5094%","0,0000","5,3574","3,7621","1.146,5000","1.379,8080","200,5000","561,6647"

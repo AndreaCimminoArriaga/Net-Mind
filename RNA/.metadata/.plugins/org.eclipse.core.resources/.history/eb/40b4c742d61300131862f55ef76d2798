@@ -1,0 +1,12 @@
+package main;
+
+import neuralNetwork.NeuralNetwork;
+
+public class NNI {
+
+	private NeuralNetwork neuralNetwork;
+	
+	
+	
+	
+}

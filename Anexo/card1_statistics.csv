@@ -1,0 +1,15 @@
+Proben File,Network Name - Topology,Learning constant,Alphamomentum,O_max,O_min,Outputs were initialized,Number of traning examples,Minimum mean squared error reached on training,Number of validation examples,Minimum mean squared error reached on validation,Overfit,Total epochs,Relevant epoch,Number of test examples,Mean squared error on testing,Number of Faliures Classifying
+card1/card1.dt,"red_card_10.txt : 51,3,[40,30,20],2",0.8,0.05,1.0,0.0,true,345,28.652973364959994,173,15.617666190864446,18.0286998330218,70,65,172,35.29171585940211,62
+card1/card1.dt,"red_card_1.txt : 51,2",0.8,0.05,1.0,0.0,true,345,35.231286332865466,173,19.601845492180058,6.82940104280676,10,5,172,40.8790732524925,3
+card1/card1.dt,"red_card_2.txt : 51,2",0.8,0.15,1.0,0.0,true,345,35.29302571249764,173,19.3914714075258,7.280472130954019,10,5,172,40.556911184237904,3
+card1/card1.dt,"red_card_3.txt : 51,1,25,2",0.8,0.05,1.0,0.0,true,345,29.503877110838925,173,18.39910827293118,23.690869283691885,10,5,172,44.44537311412155,1
+card1/card1.dt,"red_card_4.txt : 51,10,[45,40,35,30,25,20,15,10,5,3],2",0.8,0.05,1.0,0.0,true,345,28.90246420208649,173,15.682792468357581,0.0,3000,2995,172,31.148954244530014,62
+card1/card1.dt,"red_card_5.txt : 51,1,35,2",0.8,0.05,1.0,0.0,true,345,30.0645092920657,173,17.99658576299564,27.585496830249756,10,5,172,44.922714723222384,1
+card1/card1.dt,"red_card_6.txt : 51,1,15,2",0.8,0.05,1.0,0.0,true,345,29.121745110319626,173,18.355038088804182,23.701679086966276,10,5,172,44.33656379034072,1
+card1/card1.dt,"red_card_7.txt : 51,1,25,2",0.4,0.05,1.0,0.0,true,345,29.446056960574207,173,15.70551396225828,27.7866447877787,10,5,172,38.652405394411076,4
+card1/card1.dt,"red_card_8.txt : 51,1,25,2",0.16,0.05,1.0,0.0,true,345,28.759462031127057,173,15.14020963456035,12.82304863536936,15,10,172,32.76204830478637,5
+card1/card1.dt,"red_card_9.txt : 51,1,25,2",0.8,0.15,1.0,0.0,true,345,29.55057634387118,173,18.09929111393006,24.373858218710232,10,5,172,43.88881554109852,1
+
+
+Training Set Mean,Training Set Stddev,Validation Set Mean,Validation Set Stddev,Test Set Mean,Test Set Stddev,Test Set Classification Mean,Test Set Classification Stddev,Overfit Mean,Overfit Stddev,Total Epochs Mean,Total Epochs Stddev,Relevant Epochs Mean,Relevant Epochs Stddev
+"30,4526","2,4377","17,3990","1,6023","39,6885","4,8244","8,3140%","0,1389","17,2100","9,3671","315,5000","895,0096","310,5000","895,0096"

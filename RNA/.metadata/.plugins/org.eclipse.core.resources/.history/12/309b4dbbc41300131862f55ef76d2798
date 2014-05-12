@@ -1,0 +1,34 @@
+package proben1;
+
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import main.Main;
+
+// TrainingMetrics: This class contains all the formulas described in the paper PROBEN1
+
+public class TrainingMetrics {
+
+	public static List<Double> squaredErrorsForAnEpoch = new ArrayList<Double>();
+
+	
+	public static Double squaredError(Collection<Double> outputs, List<Double> target){
+		Double sum = 0.0;
+		int i= 0;
+		for(Double out:outputs){
+			sum += (out - target.get(i));
+		}
+		return sum;
+	}
+	
+	public static Double meanSquaredError(Integer numberOfOutputsNeuron, Integer numberOfExamples){
+		Double sum = 0.0;
+		Double factor_one = (Main.O_MAX - Main.O_MIN) / (numberOfOutputsNeuron * numberOfExamples);
+		
+		return sum;
+	}
+	
+	
+}

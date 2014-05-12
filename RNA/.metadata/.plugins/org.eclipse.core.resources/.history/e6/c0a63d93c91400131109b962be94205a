@@ -1,0 +1,351 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import com.csvreader.CsvWriter;
+
+
+
+public class Traductor {
+	public static String fileName = "";
+	public static String probenFile = "";
+	public static String topology= "";
+	public static Double learningConstant = 0.0;
+	public static Double alfaMomentum = 0.0;
+	public static Double O_max =0.0;
+	public static Double O_min =0.0;
+	public static Boolean output_initialized = false;
+	public static Integer numberOfTrainingExamples = 0;
+	public static List<Double> minimumSquaredErrorsOnTraining = new ArrayList<Double>();
+	public static Integer numberOfValidationExamples = 0;
+	public static List<Double>  minimumSquaredErrorsOnValidation = new ArrayList<Double>();
+	public static List<Double> overfits  = new ArrayList<Double>();
+	public static List<Integer> totalEpochs  = new ArrayList<Integer>();
+	public static List<Integer> relevantEpochs  = new ArrayList<Integer>();
+	public static List<Double>  meanSquaredErrorsOnTesting = new ArrayList<Double>();
+	public static Integer faliuresClassifying = 0;
+	public static Integer numberOfTestingExamples = 0;
+	public static List<Double>  meanFaliures = new ArrayList<Double>();
+	
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		if( args.length == 2){
+			// Run the main method if everything is all right
+			String directory = args[1];
+			treatFiles(directory);
+		}else{
+			// Help menu
+			System.out.println("####################################################################");
+			System.out.println("      .-.															");
+			System.out.println("     /_ _\\			 CCCCCC 3333333 PPPPPPP	  OOOOOOO  			    ");
+			System.out.println("     |o^o|			CCCC        33	PPP  PPP OOO   OOO				");
+			System.out.println("     \\ _ /			CCCC	  33333	PPPPPPP	 OOO   OOO				");
+			System.out.println("    .-'-'-.			CCCC        333	PPPP	 OOO   OOO              ");
+			System.out.println("  /`)  .  (`\\		 	 CCCCCC	3333333	PPPP	  OOOOOOO				");
+			System.out.println(" / /|.-'-.|\\ \\													");
+			System.out.println(" \\ \\| (_) |/ /  			- USER'S MANUAL -						");
+			System.out.println("  \\_\\'-.-'/_/  													");
+			System.out.println("  /_/ \\_/ \\_\\ 			# Usage: c3po [directory]				");
+			System.out.println("    |'._.'|  		# C3po will manage all the statistics file in 	");
+			System.out.println("    |  |  | 		# the directory and will generate a csv	file	");						
+			System.out.println("     \\_|_/   		#  with a sumary of all of them.				");
+			System.out.println("     |-|-|    														");
+			System.out.println("     |_|_|    														");
+			System.out.println("    /_/ \\_\\  														");
+			System.out.println("####################################################################");
+			System.out.println("");
+		}
+	}
+	
+	// Manage the files in the directory
+	private static void treatFiles(String directory) throws IOException{
+		List<String>files = readDirectory(directory);
+		System.out.println("- Procesing files...");
+		//Creating the csv file.
+		CsvWriter writer = createTheCsvFile(directory);
+		
+		for(String file:files){
+			processAFile(directory+"/"+file, writer);
+		}
+		writer.endRecord();
+		writer.endRecord();
+		prepareSumary(writer);
+		doSumaryData(writer);
+		
+		System.out.println("- Ready! Results will appear in a file csv in this directory called statistics.csv");
+		
+		writer.close();
+	
+	}
+	
+	// Prepare the file for the sumary
+	private static void prepareSumary(CsvWriter writer) throws IOException{
+			writer.write("Training Set Mean");
+			writer.write("Training Set Stddev");
+			writer.write("Validation Set Mean");
+			writer.write("Validation Set Stddev");
+			writer.write("Test Set Mean");
+			writer.write("Test Set Stddev");
+			writer.write("Test Set Classification Mean");
+			writer.write("Test Set Classification Stddev");
+			writer.write("Overfit Mean");
+			writer.write("Overfit Stddev");
+			writer.write("Total Epochs Mean");
+			writer.write("Total Epochs Stddev");
+			writer.write("Relevant Epochs Mean");
+			writer.write("Relevant Epochs Stddev");
+			writer.endRecord();
+	}
+	
+	// Makes a sumary of the obtained results.
+	private static void doSumaryData(CsvWriter writer) throws IOException{
+		
+		Double trainingSetAverage = mean(minimumSquaredErrorsOnTraining);
+		writer.write(trainingSetAverage.toString());
+		Double trainingSetStdev = stddev(minimumSquaredErrorsOnTraining, trainingSetAverage);
+		writer.write(trainingSetStdev.toString());
+		
+		Double validationSetAverage = mean(minimumSquaredErrorsOnValidation);
+		writer.write(validationSetAverage.toString());
+		Double validationSetStdev = stddev(minimumSquaredErrorsOnValidation, validationSetAverage);
+		writer.write(validationSetStdev.toString());
+		
+		Double testSetAverage = mean(meanSquaredErrorsOnTesting);
+		writer.write(testSetAverage.toString());
+		Double testSetStdev = stddev(meanSquaredErrorsOnTesting, testSetAverage);
+		writer.write(testSetStdev.toString());
+		
+		Double testSetClassificationAverage = mean(meanFaliures);
+		writer.write(testSetClassificationAverage.toString());
+		Double testSetClassificationStdev = stddev(meanFaliures, testSetClassificationAverage);
+		writer.write(testSetClassificationStdev.toString());
+		
+		Double meanOverfit = mean(overfits);
+		writer.write( meanOverfit.toString());
+		Double stdevOverfit = stddev(overfits, meanOverfit);
+		writer.write( stdevOverfit.toString());
+		
+		Double meanTotalEpochs = meanI(totalEpochs);
+		writer.write( meanTotalEpochs.toString());
+		Double stdevTotalEpochs = stddevI(totalEpochs, meanTotalEpochs);
+		writer.write( stdevTotalEpochs.toString());
+		
+		Double meanRelevantEpochs = meanI(relevantEpochs);
+		writer.write( meanRelevantEpochs.toString());
+		Double stdevRelevantEpochs = stddevI(relevantEpochs, meanRelevantEpochs);
+		writer.write( stdevRelevantEpochs.toString());
+		writer.endRecord();
+	}
+	
+	public static Double mean(List<Double> data){
+		Double sum = 0.0;
+		for(Double n:data){
+			sum += n;
+		}
+		return sum/data.size();
+	}
+	public static Double meanI(List<Integer> data){
+		Double sum = 0.0;
+		for(Integer n:data){
+			sum += n;
+		}
+		return sum/data.size();
+	}
+	
+	private static Double stddev(List<Double> data, Double average){
+		Double sum = 0.0;
+		for(Double n:data){
+			Double elem = n - average;
+			sum += Math.pow(elem, 2);
+		}
+		return Math.sqrt(sum/data.size());
+	}
+	private static Double stddevI(List<Integer> data, Double average){
+		Double sum = 0.0;
+		for(Integer n:data){
+			Double elem = n - average;
+			sum += Math.pow(elem, 2);
+		}
+		return Math.sqrt(sum/data.size());
+	}
+	
+	// Creates the basic csv file
+	private static CsvWriter createTheCsvFile(String directory) throws IOException{
+		CsvWriter writer = new CsvWriter (directory+"/statistics.csv");
+		writer.write("Proben File");
+		writer.write("Network Name - Topology");
+		writer.write("Learning constant");
+		writer.write("Alphamomentum");
+		writer.write("O_max");
+		writer.write("O_min");
+		writer.write("Outputs were initialized");
+		writer.write("Number of traning exmples");
+		writer.write("Minimum squared error percentage on training");
+		writer.write("Number of validation exmples");
+		writer.write("Minimum squared error percentage on validation");
+		writer.write("Overfit");
+		writer.write("Total epochs");
+		writer.write("Relevant epoch");
+		writer.write("Number of test examples");
+		writer.write("Mean squared error on training");
+		writer.write("Number of Faliures Classifying");
+		writer.endRecord();
+		
+		return writer;
+	}
+
+	// This function will read a statistic file and extract and add all the important data
+	// to the attributes of this class in order to calculate then other statistics.
+	private static void processAFile(String file_name, CsvWriter writer ) throws IOException{
+		
+		FileReader fileReader = new FileReader(file_name.trim());	
+		@SuppressWarnings("resource")
+		BufferedReader bufferReader = new BufferedReader(fileReader);
+		String line ="";
+		
+		while ((line = bufferReader.readLine())!=null) {
+			//Extracting the name of the net
+			if(line.contains("File")){
+				fileName = line.substring(line.indexOf(":")+1, line.length()).trim();
+			}
+			// Extracting the name of the proben file
+			if(line.contains("Proben file")){
+				probenFile = line.substring(line.indexOf(":")+1, line.length()).trim();
+				writer.write(probenFile);
+			}
+			//Extracting topology
+			if(line.contains("Topology")){
+				topology = line.substring(line.indexOf(":")+1, line.length()).trim();
+				writer.write(fileName +" : " +topology);
+			}
+			//Learning constant and alfamomentum
+			if(line.contains("Learning")){
+				learningConstant = new Double(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(learningConstant.toString());
+			}
+			if(line.contains("Alfa")){
+				alfaMomentum = new Double(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(alfaMomentum.toString());
+			}
+			// O_max O_min and if they were initialized
+			if(line.contains("O_max")){
+				String data = line.substring(line.indexOf("=")+1, line.length()).trim();
+				O_max = new Double( data.substring(0,data.indexOf(",")));
+				O_min = new Double (data.substring(data.indexOf(",")+1));
+				writer.write(O_max.toString());
+				writer.write(O_min.toString());
+			}
+			if(line.contains("Output")){
+				output_initialized = new Boolean(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(output_initialized.toString());	
+			}
+			
+			// Number of training examples and the minimum squared error reached on training
+			if(line.contains("Number of training examples")){
+				numberOfTrainingExamples = new Integer(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(numberOfTrainingExamples.toString());
+			}
+			
+			if(line.contains("Training set")){
+				String numberS = line.substring(line.indexOf("=")+1, line.length()).trim();
+				Double number = new Double(numberS.substring(0, numberS.indexOf("E")).trim());
+				Integer pot = new Integer(numberS.substring(numberS.indexOf("-")+1).trim());
+				Double minimumSquaredErrorOnTraining = number / Math.pow(10.0, pot);
+				writer.write(minimumSquaredErrorOnTraining.toString());
+				minimumSquaredErrorsOnTraining.add(minimumSquaredErrorOnTraining);
+			}
+			
+			//Ditto to validation
+			if(line.contains("Number of validation examples")){
+				numberOfValidationExamples = new Integer(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(numberOfValidationExamples.toString());
+			}
+			
+			if(line.contains("Validation set")){
+				String numberS = line.substring(line.indexOf("=")+1, line.length()).trim();
+				Double number = new Double(numberS.substring(0, numberS.indexOf("E")).trim());
+				Integer pot = new Integer(numberS.substring(numberS.indexOf("-")+1).trim());
+				Double minimumSquaredErrorOnValidation = number / Math.pow(10.0, pot);
+				writer.write(minimumSquaredErrorOnValidation.toString());
+				minimumSquaredErrorsOnValidation.add(minimumSquaredErrorOnValidation);
+			}
+			//Overfit
+			if(line.contains("Overfit")){
+				Double overfit = new Double(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(overfit.toString());
+				overfits.add(overfit);
+			}
+			
+			//Total epochs
+			if(line.contains("Total epochs")){
+				Integer totalEpoch = new Integer(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(totalEpoch.toString());
+				totalEpochs.add(totalEpoch);
+			}
+			// Relevant epochs
+			if(line.contains("Relevant epochs")){
+				Integer relevantEpoch = new Integer(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(relevantEpoch.toString());
+				relevantEpochs.add(relevantEpoch);
+			}
+			
+			// Number of testing examples
+			if(line.contains("Testing")){
+				numberOfTestingExamples = new Integer(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(numberOfTestingExamples.toString());
+			}
+			
+			// Mean squared error On Testing
+			if(line.contains("Mean squared error")){
+				Double meanSquaredErrorOnTesting = new Double(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(meanSquaredErrorOnTesting.toString());
+				meanSquaredErrorsOnTesting.add(meanSquaredErrorOnTesting);
+			}
+			// FaliuresClassifying
+			if(line.contains("FaliuresClassifying ")){
+				faliuresClassifying = new Integer(line.substring(line.indexOf("=")+1, line.length()).trim());
+				writer.write(faliuresClassifying.toString());
+				
+				Double meanFail =  ((faliuresClassifying*1.0) / numberOfTestingExamples);
+				meanFaliures.add(meanFail);
+				
+			}
+					
+		}	
+		
+		
+		
+		writer.endRecord();
+		
+	}
+	
+	// Given a directory returns the list files that belongs there.
+	private static List<String> readDirectory(String directory){
+		File dir = new File(directory);
+		dir.listFiles();
+		List<String> statisticsFiles = new ArrayList<String>();
+		String[] listDir = dir.list();
+		if (listDir == null)
+			System.out.println("- There are no files in that directoy.");
+		else {
+			for (int x = 0; x < listDir.length; x++)
+				if(listDir[x].contains("statistics.txt")){
+					System.out.println("- Statistic file fount: "+listDir[x]);
+					statisticsFiles.add(listDir[x]);
+				}
+				
+		}
+		
+		if(statisticsFiles.size() == 0){
+			System.out.println("- No statistics file were found, make sure you have use the absolute path of the directory or there files of that kind.");
+		}else{
+			System.out.println("- Number of files to process: "+statisticsFiles.size());
+		}
+		
+		return statisticsFiles;
+		
+	}
+
+}
