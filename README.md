@@ -1,16 +1,15 @@
-Net-Mind
-========
+This academic work is about a NN library to allow anyone to build different neural networks with different topologies and neurons in each layer. Futher this project will calculate many metrics to measure the quality of the neural network in the specific problem, also the project provides some files with real problems to experiment.
 
-Trabajo sobre redes neuronales desarrollado en java.
+	Technology: Java.
 
-En este directorio tenemos diferentes archivos:
+In this directory we have different files :
 
-	- net-mind_experiments: este directorio contiene toda la seccion experimental del trabajo. Tanto los ficheros compilados, sus manuales, los ficheros experimentales de PROBEN, los resultados obtenidos. En resumen, todo lo que tiene que ver con la parte experimental. Para mas informacion leer el archivo README.txt presente en la carpeta
-	
-	- RNA: es el workspace de eclipse donde he desarrollado el proyecto, contiene todo el codigo fuente programado. Esta pensado para que se pueda cargar directamente en eclipse, ya contiene todo los dos programas creados para la realizacion del trabajo.
-	
-	- Net-Mind: es la memoria de este trabajo.
-	
-	- Anexo: contiene los datos experimentales expuestos en el trabajo teorico Net-Mind.
-	
-Recomiendo leer el archivo README.txt de la  carpeta net-mind_experiments antes de intentar reproducir los experimentos ya que el programa que genera las redes tiene muchas opciones, pero en concreto recomiendo usar una que agiliza mucho el trabajo y que aparece explicada en dicho archivo.
+- Net-mind_experiments : This directory contains all the experimental section of the work. Both the compiled files , manuals , experimental proben files , the results obtained. In short , everything that has to do with the experimental part. For more information read this README.txt file in the folder
+
+- RNA : the workspace of eclipse where I developed the project contains all the source code set . This is designed so that you can load directly into eclipse, and contains all the two programs created for their job.
+
+- Net- Mind : the memory of this work.
+
+- Annex: contains the experimental data presented in the theoretical work Net- Mind .
+
+I recommend reading the README.txt file in the net- mind_experiments folder before attempting to reproduce the experiments because the program that generates networks have many options , but specifically recommend using one that speeds up the job and that is explained in the file.
